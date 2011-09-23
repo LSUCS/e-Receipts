@@ -57,47 +57,42 @@ a:hover {
 }
 	
 .navBarBack {
-	height: 28px;
+	height: 40px;
 	width: 100%;
-	background-color: #222;
-}
-.navBar {
-	height: 28px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 760px;
+	background-image: url(custom-theme/images/ui-bg_gloss-wave_25_333333_x40.png);
+	background-repeat: repeat-x;
 	color: #FFF;
-	font-size: 12px;
-	line-height: 28px;
+	font-size: 14px;
 }
-	.navbar ul {
+	.navBarBack ul {
 		list-style: none;
-		line-height: 28px;
-		height: 28px;
+		line-height: 40px;
+		height: 40px;
+		display: block;
+		text-align: center;
 	}
-	.navbar li {
+	.navBarBack li {
 		display: inline-block;
 		padding-left: 5px;
 		padding-right: 5px;
-		height: 28px;
-		line-height: 28px;
+		height: 40px;
+		line-height: 40px;
 		margin: 0px;
 	}
-	.navbar a {
+	.navBarBack a {
 		text-decoration: none;
 		color: #FFF;
 		padding-left: 5px;
 		padding-right: 5px;
 	}
-	.navbar a:visited {
-		background-color: #222;
-		color: #FFF;
-	}
-	
-	.navbar a:hover {
+	.navBarBack a:hover {
 		display: block;
-		background-color: #FFF;
+		background-image: url(custom-theme/images/ui-bg_gloss-wave_25_333333_x40-light.png);
+		background-repeat: repeat-x;
 		color: #000;
+		border-right: 1px solid #999;
+		border-left: 1px solid #999;
+		margin-left: -2px;
 	}
 
 .mainContainer {
@@ -125,18 +120,20 @@ a:hover {
 	}
 
 .titlebar {
-	height: 27px;
+	height: 35px;
 	width: 100%;
-	background-color: #CCC;
-	font-size: 24px;
-	line-height: 27px;
+	font-size: 20px;
+	line-height: 35px;
 	font-weight: bold;
-	padding-left: 5px;
+	padding-left: 10px;
 	margin-top: 10px;
 	margin-bottom: 20px;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
+	border: 1px solid #F60;
+	background-image: url(custom-theme/images/ui-bg_gradient_35x20.png);
+	background-repeat: repeat-x;
 }
 	.titlebar b {
 		float: right;
@@ -147,9 +144,28 @@ a:hover {
 	
 .loginForm {
 	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 260px;
 }
 	.loginForm input {
 		margin-bottom: 5px;
+	}
+	.loginForm .emailBox {
+		margin-left: 40px;	
+	}
+	.loginForm .passBox {
+		margin-left: 9px;
+	}
+	.loginForm .loginButton {
+		width: 100px;
+		height: 30px;
+		font-size: 15px;
+		margin-top: 10px;
+		margin-left: 75px;
+	}
+	.loginForm .loginButton span {
+		margin-top: -3px;
 	}
 	
 .errorBox {

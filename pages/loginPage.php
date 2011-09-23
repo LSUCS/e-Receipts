@@ -39,9 +39,11 @@
             
                 <div class="loginForm">
                     <form action="index.php?page=login" method="post">
-                        Email: <input type="text" name="email" /><br />
-                        Password: <input type="password" name="password" /><br />
-                        <input type="submit" value="Login" />
+                        Email: <input class="emailBox" type="text" name="email" /><br />
+                        Password: <input class="passBox" type="password" name="password" /><br />
+                        <button class="loginButton">
+                        	<span>Login</span>
+                        </button>
                     </form>
                 </div>
             <?php

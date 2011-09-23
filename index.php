@@ -57,23 +57,23 @@
 					<title><?php echo $compiledTitle; ?></title>
                     <link rel="shortcut icon" href="images/favicon.ico" />
 					<link href="css/styles.css" rel="stylesheet" type="text/css" />
-                    <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.13.custom.css" />
+                    <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.16.custom.css" />
 					<link rel="stylesheet" type="text/css" href="css/uniform.default.css" />
                     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-                    <script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
+                    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
         			<script type="text/javascript" src="js/scripts.js"></script>
         			<script type="text/javascript" src="js/jquery.uniform.min.js"></script>
 				</head>
 				<body>
                 	<div class="navBarBack">
-                        <div class="navBar">
-                            <ul>
-                                <li><a href="index.php">Issue Receipt</a></li>
-                                <li><a href="index.php?page=view">View Receipts</a></li>
-                                <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=product">Product Management</a></li>'; ?>
-                                <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=accounts">Account Management</a></li>'; ?>
-                            </ul>
-                        </div>
+                	<?php if ($this->loggedIn) { ?>
+	                	<ul>
+	                    	<li><a href="index.php">Issue Receipt</a></li>
+	                        <li><a href="index.php?page=view">View Receipts</a></li>
+	                        <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=product">Product Management</a></li>'; ?>
+	                        <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=accounts">Account Management</a></li>'; ?>
+	                    </ul>
+                	<?php } ?>
                     </div>
                     <div class="mainContainer">
                         <div class="logoBar">
