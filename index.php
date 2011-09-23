@@ -54,7 +54,7 @@
 					<link href="css/styles.css" rel="stylesheet" type="text/css" />
                     <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.13.custom.css" />
 					<link rel="stylesheet" type="text/css" href="css/uniform.default.css" />
-                    <script type="text/javascript" src="jquery-1.1.3.1.min.js"></script>
+                    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
                     <script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
         			<script type="text/javascript" src="js/scripts.js"></script>
         			<script type="text/javascript" src="js/jquery.uniform.min.js"></script>
