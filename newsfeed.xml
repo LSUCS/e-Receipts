@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+	
+		<title>LSUCS LAN30</title>
+		<link>http://lan</link>
+		<description>LSUCS LAN30 Info Feed</description>
+		
+		<item>
+			<title>LSUCS News System In Place</title>
+			<author>oliverw92</author>
+			<link>http://www.oliwali.co.uk/index.php?page=blog&amp;item=3</link>
+			<pubDate>Sun, 20th June 2010 5:13pm +0100</pubDate>
+			<description><![CDATA[
+			[b]Hello Dave[/b]
+			[list]
+			[*][b]DERP[/b]
+			[*]HERP
+			[code]hello($dave);[/code]
+			[/list]
+			]]></description>
+		</item>
+		
+	</channel>
+</rss>

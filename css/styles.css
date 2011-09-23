@@ -1,0 +1,287 @@
+@charset "utf-8";
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+input, textarea {  
+    padding: 6px;  
+    border: solid 1px #999;
+    outline: 0;  
+    font: normal 13px/100% Verdana, Tahoma, sans-serif;
+    background: #FFFFFF;
+	border-radius: 5px 5px 5px 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	margin: 2px;
+}
+    input:focus {  
+        -webkit-box-shadow: 0px 0px 5px #74ABE9;
+        -moz-box-shadow: 0px 0px 5px #74ABE9;
+        box-shadow: 0px 0px 5px #74ABE9;
+    }
+
+pre {
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	height: 100%;
+	width: 100%;
+	background-color: #FFF;
+}
+a, a:visited {
+	color: #000;
+}
+a:hover {
+	color: #F60;
+}
+	
+.navBarBack {
+	height: 28px;
+	width: 100%;
+	background-color: #222;
+}
+.navBar {
+	height: 28px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 760px;
+	color: #FFF;
+	font-size: 12px;
+	line-height: 28px;
+}
+	.navbar ul {
+		list-style: none;
+		line-height: 28px;
+		height: 28px;
+	}
+	.navbar li {
+		display: inline-block;
+		padding-left: 5px;
+		padding-right: 5px;
+		height: 28px;
+		line-height: 28px;
+		margin: 0px;
+	}
+	.navbar a {
+		text-decoration: none;
+		color: #FFF;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+	.navbar a:visited {
+		background-color: #222;
+		color: #FFF;
+	}
+	
+	.navbar a:hover {
+		display: block;
+		background-color: #FFF;
+		color: #000;
+	}
+
+.mainContainer {
+	width: 800px;
+	height: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 20px;
+}
+
+.logoBar {
+	height: 84px;
+	width: 100%;
+	background-image: url('../images/lsuLogo.png');
+	background-position: right;
+	background-repeat: no-repeat;
+	margin-left: 10px;
+	font-size: 75px;
+	font-weight: bold;
+}
+	.logoBar b {
+		color: #F60;
+		margin-right: 40px;
+	}
+
+.titlebar {
+	height: 27px;
+	width: 100%;
+	background-color: #CCC;
+	font-size: 24px;
+	line-height: 27px;
+	font-weight: bold;
+	padding-left: 5px;
+	margin-top: 30px;
+	margin-bottom: 20px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+	.titlebar b {
+		float: right;
+		font-size: 15px;
+		padding-right: 8px;
+		font-weight: 400;
+	}
+	
+.loginForm {
+	margin-top: 10px;
+}
+	.loginForm input {
+		margin-bottom: 5px;
+	}
+	
+.errorBox {
+	width: 675px;
+	border: thin solid #D51E22;
+	background-color: #FA98A7;
+	margin: 10px;
+	padding-left: 5px;
+}
+
+.signupGame {
+	width: 100%;
+	margin-bottom: 40px;
+	margin-top: 20px;
+}
+	.signupGame h1 {
+		font-size: 25px;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	.signupGame h2 {
+		padding-left: 30px;
+		font-weight: 400;
+	}
+		.signupGame h2 b {
+			color: #F60;
+		}
+.signupGameForm {
+	margin-left: 30px;
+	margin-top: 10px;
+}
+	.signupGameForm input {
+		margin-bottom: 5px;
+	}
+	
+.tournamentGame {
+	width: 100%;
+	margin-bottom: 40px;
+	margin-top: 20px;
+}
+	.tournamentGame h1 {
+		font-size: 25px;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	.tournamentGame h2 {
+		padding-left: 30px;
+		font-weight: 400;
+	}
+		.tournamentGame h2 b {
+			color: #F60;
+		}
+		
+.homePage {
+	
+}
+    .homepage .newsFeed {
+		padding-top: 20px;
+		font-size: 16px;
+		float: left;
+		width: 570px;
+	}
+	.homepage .mainInfo {
+		width: 200px;
+		float: left;
+		border: 1px solid #999;
+		border-radius: 10px;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		margin-left: 10px;
+		margin-bottom: 20px;
+		padding: 5px;
+		font-size: 13px;
+	}
+		.homepage .mainInfo .infoHeader {
+			text-align: center;
+			font-size: 20px;
+			color: #F60;
+			font-weight: bold;
+			margin-bottom: 15px;
+		}
+	.homePage h1 {
+		font-size: 30px;
+		font-weight: bold;
+		margin-bottom: 10px;
+		color: #F60;
+	}
+	.homePage h2 {
+		font-size: 20px;
+		font-weight: bold;
+		margin-left: 20px;
+		margin-bottom: 5px;
+		margin-top: 15px;
+	}
+	.homePage p, pre {
+		margin-left: 20px;
+	}
+	.homePage ul {
+		margin-left: 40px;
+	}
+	.homePage>ul {
+		list-style: none;
+	}
+	.homePage ul li:before {
+		display: marker;
+		content: "\2022    ";
+		color: #F60;
+	}
+	.homePage hr {
+		border: none;
+		color: #999;
+		background-color: #999;
+		margin-top: 30px;
+		margin-bottom: 30px;
+		height: 1px;
+	}
+	
+.teamTable {
+	margin-left: 30px;
+	margin-top: 10px;
+	border: thin solid #999;
+	border-collapse: collapse;
+	min-width: 300px;
+}
+	.teamTable .headTd {
+		background-color: #CCC;
+		color: #F60;
+		padding: 5px 15px 5px 15px;
+	}
+	.teamTable tr {
+		border: thin solid #999;
+	}
+	.teamTable td {
+		border: thin solid #999;
+		padding: 2px 15px 2px 15px;
+	}
