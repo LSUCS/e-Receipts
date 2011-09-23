@@ -14,11 +14,12 @@
 		public $user;
 		public $refresh = false;
 		public $loggedIn = false;
+		public $defaultPage = "make";
 		
 		function __construct() {
 			
 			$this->db   = new Db();
-			$this->page = (isset($_GET["page"]) ? $_GET["page"] : "make");
+			$this->page = (isset($_GET["page"]) ? $_GET["page"] : $this->defaultPage);
 			
 			//Load user if logged in
 			if (isset($_SESSION["email"])) {
@@ -27,7 +28,7 @@
 			
 			//Include requested page
 			if (!in_array($this->page, $this->pages)) {
-				$this->page = "make";
+				$this->page = $this->defaultPage;
 			}
 			include("pages/".$this->page."Page.php");
 			$child = new $this->page;
@@ -59,10 +60,12 @@
 					<link href="css/styles.css" rel="stylesheet" type="text/css" />
                     <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.16.custom.css" />
 					<link rel="stylesheet" type="text/css" href="css/uniform.default.css" />
+					<link rel="stylesheet" type="text/css" href="css/datatables.css" />
                     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
                     <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
         			<script type="text/javascript" src="js/scripts.js"></script>
         			<script type="text/javascript" src="js/jquery.uniform.min.js"></script>
+        			<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 				</head>
 				<body>
                 	<div class="navBarBack">
@@ -70,7 +73,7 @@
 	                	<ul>
 	                    	<li><a href="index.php">Issue Receipt</a></li>
 	                        <li><a href="index.php?page=view">View Receipts</a></li>
-	                        <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=product">Product Management</a></li>'; ?>
+	                        <li><a href="index.php?page=product">Product Management</a></li>
 	                        <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=accounts">Account Management</a></li>'; ?>
 	                    </ul>
                 	<?php } ?>
@@ -115,16 +118,21 @@
 				header("location:index.php?page=login&loggedin=true");
 			}
 		}
+		
 	}
 	
 	//User class
 	class User {
 		
 		public $email;
+		public $active;
+		public $student_id;
 		
 		function __construct($email, $db) {
 			$info = $db->getUser($email);
 			$this->email = $info->email;
+			$this->active = $info->active;
+			$this->student_id = $info->student_id;
 		}
 		
 	}
@@ -143,6 +151,9 @@
 			$this->createTables();
 		}
 		
+		/**
+		 * Base MySQL query function. Cleans all parameters to prevent injection
+		 */
 		function query() {
 			$args = func_get_args();
 			$sql = array_shift($args);
@@ -151,6 +162,16 @@
 			return mysql_query(vsprintf($sql, $args));
 		}
 		
+		/**
+		 * Stops MySQL injection
+		 */
+		private function clean($string) {
+			return mysql_real_escape_string(trim($string));
+		}
+		
+		/**
+		 * Check if email and password are valid
+		 */
 		function checkLoginDetails($email, $password) {
 			$sql = "SELECT * FROM `users` WHERE UPPER(email)=UPPER('%s') AND password='%s'";
 			$result = $this->query($sql, $email, sha1($password));
@@ -159,42 +180,103 @@
 			return true;
 		}
 		
-		function addUser($email, $password) {
-			$sql = "INSERT INTO `users` (email, password)
+		/**
+		 * Add user to database
+		 */
+		function addUser($email, $password, $student_id, $society_id) {
+			$sql = "INSERT INTO `users` (email, password, student_id, society_id)
 					VALUES ('%s', '%s')";
-			$this->query($sql, $email, sha1($password));
+			$this->query($sql, $email, sha1($password), $student_id, $society_id);
 		}
 		
+		/**
+		 * Retrieves a user from the database
+		 */
 		function getUser($email) {
 			if (is_numeric($email))
-				$sql = "SELECT * FROM `users` WHERE id=%s";
+				$sql = "SELECT * FROM `users` WHERE user_id=%s";
 			else
 				$sql = "SELECT * FROM `users` WHERE UPPER(email)=UPPER('%s')";
 			$result = $this->query($sql, $email);
 			return mysql_fetch_object($result);
 		}
 		
+		/**
+		 * Checks if a user exists
+		 */
 		function userExists($email) {
 			if ($this->getUser($email) != false)
 				return true;
 			return false;
 		}
 		
-		private function clean($string) {
-			return mysql_real_escape_string(trim($string));
-		}
-		
+		/**
+		 * Creates default tables if they don't exist
+		 */
 		private function createTables() {
+
+			//User table
 			$sql = "CREATE TABLE IF NOT EXISTS `users` (
-					id int NOT NULL AUTO_INCREMENT, 
+					user_id int NOT NULL AUTO_INCREMENT,
+					student_id varchar(30),
 					email varchar(100),
-					password varchar(150),
-					PRIMARY KEY(id)
+					password varchar(50),
+					society_id int DEFAULT 0,
+					active BOOL DEFAULT 1,
+					PRIMARY KEY(user_id)
 					)";
-			mysql_query($sql);
+			$this->query($sql);
 			$sql = "INSERT INTO `users` (email, password)
 					VALUES ('admin', '%s')";
 			if (!$this->userExists("admin")) $this->query($sql, sha1("adminpass"));
+			
+			//Society table
+			$sql = "CREATE TABLE IF NOT EXISTS `societies` (
+					society_id int NOT NULL AUTO_INCREMENT,
+					email varchar(100),
+					name varchar(50),
+					PRIMARY KEY(society_id)
+					)";
+			$this->query($sql);
+			$sql = "INSERT IGNORE INTO `societies` (email, name, society_id)
+					VALUES ('committee@lsucs.org.uk', 'LSUCS', 1)";
+			$this->query($sql);
+			
+			//Products table
+			$sql = "CREATE TABLE IF NOT EXISTS `products` (
+					product_id int NOT NULL AUTO_INCREMENT,
+					name varchar(100),
+					price DECIMAL(10, 2) NOT NULL,
+					society_id int DEFAULT 0,
+					available BOOL DEFAULT 1,
+					PRIMARY KEY(product_id)
+					)";
+			$this->query($sql);
+			$sql = "INSERT IGNORE INTO `societies` (email, name, society_id)
+					VALUES ('committee@lsucs.org.uk', 'LSUCS', 1)";
+			$this->query($sql);
+			
+			//Receipts table
+			$sql = "CREATE TABLE IF NOT EXISTS `receipts` (
+					receipt_id int NOT NULL AUTO_INCREMENT,
+					user_id int,
+					email varchar(100),
+					name varchar(100),
+					comments text,
+					PRIMARY KEY(receipt_id)
+					)";
+			$this->query($sql);
+			
+			//Refund table
+			$sql = "CREATE TABLE IF NOT EXISTS `refunds` (
+					refund_id int NOT NULL AUTO_INCREMENT,
+					receipt_id int,
+					refund_amount DECIMAL(10, 2) NOT NULL,
+					comments text,
+					PRIMARY KEY(refund_id)
+					)";
+			$this->query($sql);
+			
 		}
 		
 	}

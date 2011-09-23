@@ -15,8 +15,18 @@
 			if (isset($email) && isset($password)) {
 				if ($parent->db->checkLoginDetails($email, $password)) {
 					$parent->loadUser($_POST["email"]);
-					$_SESSION['email'] = $email;
-					$parent->actionResult(0);
+					if ($parent->user->active) {
+						$_SESSION['email'] = $email;
+						$parent->actionResult(0);
+					}
+					else {
+						$parent->loggedIn = false;
+						?>
+                        	<div class="errorBox">
+                        	    Your account has been de-activated, speak to your committee chair to re-activate.
+                        	</div>
+                    	<?php
+					}
 				}
 				else {
 					?>
