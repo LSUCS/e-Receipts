@@ -15,22 +15,26 @@
 					echo "Successfully logged out!";
 					break;
 				case 2:
-					echo "Account successfully created!";
+					echo "User account created!";
 					break;
 				case 3:
-					echo "Successfully signed up to tournament!";
+					echo "Receipt sent!";
 					break;
 				case 4:
-					echo "You have been removed from that tournament!";
+					echo "Refund sent!";
 					break;
 				case 5:
-					echo "Content saved!";
+					echo "Product added!";
 					break;
 				case 6;
 					echo "You are already logged in!";
 					break;
 				case 7:
-					echo "You are already registered!";
+					echo "Product deleted!";
+					break;
+				case 8:
+					echo "User added account deleted!";
+					break;
 			}
 			echo " Redirecting to index page...";
 			$parent->displayFooter();

@@ -7,10 +7,10 @@
 		
 		//Setup some variables
 		public $db;
-		public $titleSuffix = "LAN30 - A local area network for local people";
-		public $title = "Home";
+		public $titleSuffix = "LSUCS e-Receipt System";
+		public $title = "Issue Receipt";
 		public $page;
-		public $pages = array("actionresult", "index", "login", "logout", "register", "tournsignups", "tournaments");
+		public $pages = array("actionresult", "login", "logout", "make", "view", "refund", "product", "accounts");
 		public $user;
 		public $refresh = false;
 		public $loggedIn = false;
@@ -18,17 +18,20 @@
 		function __construct() {
 			
 			$this->db   = new Db();
-			$this->page = (isset($_GET["page"]) ? $_GET["page"] : "index");
+			$this->page = (isset($_GET["page"]) ? $_GET["page"] : "make");
 			
-			if (isset($_SESSION["username"])) {
-				$this->loadUser($_SESSION["username"]);
+			//Load user if logged in
+			if (isset($_SESSION["email"])) {
+				$this->loadUser($_SESSION["email"]);
 			}
+			
 			//Include requested page
-			if (in_array($this->page, $this->pages)) {
-				include("pages/".$this->page."Page.php");
-				$child = new $this->page;
-				$child->run($this);
+			if (!in_array($this->page, $this->pages)) {
+				$this->page = "make";
 			}
+			include("pages/".$this->page."Page.php");
+			$child = new $this->page;
+			$child->run($this);
 			
 		}
 		
@@ -40,15 +43,17 @@
 		
 		//Display global page header
 		function displayHeader() {
+			
+			//Format require information for template
 			$compiledTitle = $this->title . " | " . $this->titleSuffix;
+			$userStatus = "";
 			if ($this->loggedIn)
-				$userStatus = "Welcome, " . $this->user->username . '. Click here to <a href="index.php?page=logout">logout</a>';
-			else
-				$userStatus = 'Click here to <a href="index.php?page=login">login</a> or <a href="index.php?page=register">register</a>';
+				$userStatus = "Welcome, " . $this->user->email . '. Click here to <a href="index.php?page=logout">logout</a>';
+				
 			?>
 			<html> 
 				<head>
-                	<?php if ($this->refresh) echo '<meta http-equiv="refresh" content="3;url=index.php?page=index">'; ?>
+                	<?php if ($this->refresh) echo '<meta http-equiv="refresh" content="3;url=index.php">'; ?>
 					<title><?php echo $compiledTitle; ?></title>
                     <link rel="shortcut icon" href="images/favicon.ico" />
 					<link href="css/styles.css" rel="stylesheet" type="text/css" />
@@ -63,16 +68,16 @@
                 	<div class="navBarBack">
                         <div class="navBar">
                             <ul>
-                                <li><a href="index.php?page=index">Home</a></li>
-                                <li><a href="http://lsucs.org.uk/forum/">Forum</a></li>
-                                <li><a href="index.php?page=tournaments">Tournaments</a></li>
-                                <li><a href="index.php?page=tournsignups">Tournament Signups</a></li>
+                                <li><a href="index.php">Issue Receipt</a></li>
+                                <li><a href="index.php?page=view">View Receipts</a></li>
+                                <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=product">Product Management</a></li>'; ?>
+                                <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=accounts">Account Management</a></li>'; ?>
                             </ul>
                         </div>
                     </div>
                     <div class="mainContainer">
                         <div class="logoBar">
-                            lan<b>30</b>
+                            <b>e</b>-Receipts
                         </div>
                         <div class="titleBar">
                         	<?php echo $this->title; ?>
@@ -99,7 +104,7 @@
 	
 		//Returns true if user is admin
 		function isAdmin() {
-			if ($this->loggedIn && $this->user->username == "admin")
+			if ($this->loggedIn && $this->user->email == "admin")
 				return true;
 			return false;
 		}
@@ -115,19 +120,11 @@
 	//User class
 	class User {
 		
-		public $userid;
-		public $username;
-		public $name;
-		public $seat;
-		public $steamid;
+		public $email;
 		
-		function __construct($username, $db) {
-			$info = $db->getUser($username);
-			$this->userid   = $info->id;
-			$this->username = $info->username;
-			$this->steamid  = $info->steamid;
-			$this->seat     = $info->seat;
-			$this->name     = $info->name;
+		function __construct($email, $db) {
+			$info = $db->getUser($email);
+			$this->email = $info->email;
 		}
 		
 	}
@@ -154,32 +151,31 @@
 			return mysql_query(vsprintf($sql, $args));
 		}
 		
-		function checkLoginDetails($username, $password) {
-			$sql = "SELECT * FROM `users` WHERE UPPER(username)=UPPER('%s') AND password='%s'";
-			$result = mysql_query(sprintf($sql, $this->clean($username), sha1($this->clean($password))));
+		function checkLoginDetails($email, $password) {
+			$sql = "SELECT * FROM `users` WHERE UPPER(email)=UPPER('%s') AND password='%s'";
+			$result = $this->query($sql, $email, sha1($password));
 			if (mysql_num_rows($result) == 0)
 				return false;
 			return true;
 		}
 		
-		function addUser($username, $password, $seat, $steam, $name) {
-			$sql = "INSERT INTO `users` (username, password, steamid, seat, name)
-					VALUES ('%s', '%s', '%s', '%s', '%s')";
-			$sql = sprintf($sql, $this->clean($username), sha1($password), $this->clean($steam), $this->clean($seat), $this->clean($name));
-			mysql_query($sql);
+		function addUser($email, $password) {
+			$sql = "INSERT INTO `users` (email, password)
+					VALUES ('%s', '%s')";
+			$this->query($sql, $email, sha1($password));
 		}
 		
-		function getUser($username) {
-			if (is_numeric($username))
+		function getUser($email) {
+			if (is_numeric($email))
 				$sql = "SELECT * FROM `users` WHERE id=%s";
 			else
-				$sql = "SELECT * FROM `users` WHERE UPPER(username)=UPPER('%s')";
-			$result = mysql_query(sprintf($sql, $this->clean($username)));
+				$sql = "SELECT * FROM `users` WHERE UPPER(email)=UPPER('%s')";
+			$result = $this->query($sql, $email);
 			return mysql_fetch_object($result);
 		}
 		
-		function userExists($username) {
-			if ($this->getUser($username) != false)
+		function userExists($email) {
+			if ($this->getUser($email) != false)
 				return true;
 			return false;
 		}
@@ -191,44 +187,14 @@
 		private function createTables() {
 			$sql = "CREATE TABLE IF NOT EXISTS `users` (
 					id int NOT NULL AUTO_INCREMENT, 
-					username varchar(50),
+					email varchar(100),
 					password varchar(150),
-					steamid varchar(50),
-					seat varchar(3),
-					name varchar(150),
 					PRIMARY KEY(id)
 					)";
 			mysql_query($sql);
-			$sql = "INSERT INTO `users` (username, password)
+			$sql = "INSERT INTO `users` (email, password)
 					VALUES ('admin', '%s')";
-			if (!$this->userExists("admin")) $this->query($sql, sha1("82NAL"));
-			$sql = "CREATE TABLE IF NOT EXISTS `games` (
-					id int NOT NULL AUTO_INCREMENT, 
-					game varchar(50),
-					type varchar(150),
-					teamsize int(10),
-					time varchar(100),
-					info varchar(300),
-					open tinyint(1) DEFAULT '1',
-					PRIMARY KEY(id)
-					)";
-			mysql_query($sql);
-			$sql = "CREATE TABLE IF NOT EXISTS `signups` (
-					id int NOT NULL AUTO_INCREMENT, 
-					userid int(10),
-					gameid int(10),
-					teamid int(10),
-					PRIMARY KEY(id)
-					)";
-			mysql_query($sql);
-			$sql = "CREATE TABLE IF NOT EXISTS `teams` (
-					id int NOT NULL AUTO_INCREMENT,
-					gameid int(10),
-					teamname varchar(50),
-					password varchar(50),
-					PRIMARY KEY(id)
-					)";
-			mysql_query($sql);
+			if (!$this->userExists("admin")) $this->query($sql, sha1("adminpass"));
 		}
 		
 	}
