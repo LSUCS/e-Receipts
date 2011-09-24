@@ -141,36 +141,13 @@ a:hover {
 		font-weight: 400;
 	}
 	
-.loginForm {
-	margin-top: 10px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 260px;
-}
-	.loginForm input {
-		margin-bottom: 5px;
-	}
-	.loginForm .emailBox {
-		margin-left: 40px;	
-	}
-	.loginForm .passBox {
-		margin-left: 9px;
-	}
-	.loginForm .loginButton {
-		width: 100px;
-		height: 30px;
-		font-size: 15px;
-		margin-top: 10px;
-		margin-left: 75px;
-	}
-	.loginForm .loginButton span {
-		margin-top: -3px;
-	}
-	
 .errorBox {
 	width: 675px;
 	border: thin solid #D51E22;
 	background-color: #FA98A7;
 	margin: 10px;
 	padding-left: 5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }

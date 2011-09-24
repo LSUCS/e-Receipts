@@ -61,6 +61,7 @@
                     <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.16.custom.css" />
 					<link rel="stylesheet" type="text/css" href="css/uniform.default.css" />
 					<link rel="stylesheet" type="text/css" href="css/datatables.css" />
+					<?php if (file_exists("css/pages/" . $this->page . ".css")) echo '<link rel="stylesheet" type="text/css" href="css/pages/' . $this->page . '.css" />'; ?>
                     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
                     <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
         			<script type="text/javascript" src="js/scripts.js"></script>

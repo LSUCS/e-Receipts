@@ -1,0 +1,25 @@
+.loginForm {
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 260px;
+}
+	.loginForm input {
+		margin-bottom: 5px;
+	}
+	.loginForm .emailBox {
+		margin-left: 40px;	
+	}
+	.loginForm .passBox {
+		margin-left: 9px;
+	}
+	.loginForm .loginButton {
+		width: 100px;
+		height: 30px;
+		font-size: 15px;
+		margin-top: 10px;
+		margin-left: 75px;
+	}
+	.loginForm .loginButton span {
+		margin-top: -3px;
+	}
