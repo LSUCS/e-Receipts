@@ -2,7 +2,6 @@
 	width: 100%;
 }
 	.productTable tbody tr {
-    	cursor: pointer;
     	height: 40px;
     	line-height: 40px;
 	}
@@ -13,6 +12,9 @@
 	}
 	.productTable input {
 		text-align: center;
+	}
+	.productTable .editable, .productTable .selectable {
+    	cursor: pointer;
 	}
 	
 .DataTables_sort_wrapper {
@@ -47,13 +49,15 @@
 	margin-left: 15px;
 	width: 125px;
 }
-.productAvailable {
+.availableDiv {
+	display: inline;
 	margin-left: 15px;
-	width: 125px;
+}
+.availableDiv .selector {
+	margin-top: -4px;
 }
 .addProductButton {
 	font-size: 13px;
-	margin-left: 15px;
+	margin-left: 10px;
+	margin-bottom: 30px;
 }
-	
-	

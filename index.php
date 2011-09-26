@@ -229,7 +229,6 @@
 			$sql = "SELECT products.product_id, products.product_name, products.price, products.available, societies.society_name, societies.society_id FROM `products`, `societies` WHERE products.society_id = societies.society_id AND products.product_id='%s'";
 		 	if ($society_id != null) $sql .= " AND products.society_id='%s'";
 		 	$result = $this->query($sql, $id, $society_id);
-		 	echo mysql_error();
 		 	if (mysql_num_rows($result) == 0) return false;
 		 	return mysql_fetch_object($result);
 		}
@@ -285,8 +284,8 @@
 					PRIMARY KEY(society_id)
 					)";
 			$this->query($sql);
-			$sql = "INSERT IGNORE INTO `societies` (email, name, society_id)
-					VALUES ('committee@lsucs.org.uk', 'LSUCS', 1)";
+			$sql = "INSERT IGNORE INTO `societies` (email, society_name)
+					VALUES ('committee@lsucs.org.uk', 'LSUCS')";
 			$this->query($sql);
 			
 			//Products table

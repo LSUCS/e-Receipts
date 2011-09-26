@@ -86,7 +86,10 @@
 			</div>
 			<input class="productName" type="text" name="name" value="Product Name" />
 			<input class="productPrice" type="text" name="price" value="Price" />
-			<input class="productAvailable" type="text" name="available" value="Available" />
+			<div class="availableDiv"><select class="productAvailable" name="available" />
+				<option value="1">Yes</option>
+				<option value="0">No</option>
+			</select></div>
 			<button class="addProductButton">Add Product</button>
 			
 			<?php
