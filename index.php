@@ -10,6 +10,7 @@
 		public $titleSuffix = "LSUCS e-Receipt System";
 		public $title = "Issue Receipt";
 		public $page;
+		public $get;
 		public $pages = array("actionresult", "login", "logout", "make", "view", "refund", "product", "accounts");
 		public $user;
 		public $refresh = false;
@@ -25,6 +26,10 @@
 			if (isset($_SESSION["email"])) {
 				$this->loadUser($_SESSION["email"]);
 			}
+			
+			//See if there is a 'get' to do
+			if (isset($_GET["get"])) $this->get = strtolower($_GET["get"]);
+			else unset($this->get);
 			
 			//Include requested page
 			if (!in_array($this->page, $this->pages)) {
@@ -61,12 +66,16 @@
                     <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.16.custom.css" />
 					<link rel="stylesheet" type="text/css" href="css/uniform.default.css" />
 					<link rel="stylesheet" type="text/css" href="css/datatables.css" />
-					<?php if (file_exists("css/pages/" . $this->page . ".css")) echo '<link rel="stylesheet" type="text/css" href="css/pages/' . $this->page . '.css" />'; ?>
                     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
                     <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
         			<script type="text/javascript" src="js/scripts.js"></script>
         			<script type="text/javascript" src="js/jquery.uniform.min.js"></script>
         			<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+        			<script type="text/javascript" src="js/jquery.jeditable.min.js"></script>
+					<?php 
+						if (file_exists("css/pages/" . $this->page . ".css")) echo '<link rel="stylesheet" type="text/css" href="css/pages/' . $this->page . '.css" />';
+						if (file_exists("js/pages/" . $this->page . ".js")) echo '<script type="text/javascript" src="js/pages/' . $this->page . '.js"></script>';
+					?>
 				</head>
 				<body>
                 	<div class="navBarBack">
@@ -128,12 +137,14 @@
 		public $email;
 		public $active;
 		public $student_id;
+		public $society_id;
 		
 		function __construct($email, $db) {
 			$info = $db->getUser($email);
 			$this->email = $info->email;
 			$this->active = $info->active;
 			$this->student_id = $info->student_id;
+			$this->society_id = $info->society_id;
 		}
 		
 	}
@@ -162,13 +173,13 @@
 				$args[$key] = $this->clean($value);
 			return mysql_query(vsprintf($sql, $args));
 		}
-		
 		/**
 		 * Stops MySQL injection
 		 */
 		private function clean($string) {
 			return mysql_real_escape_string(trim($string));
 		}
+		
 		
 		/**
 		 * Check if email and password are valid
@@ -180,7 +191,6 @@
 				return false;
 			return true;
 		}
-		
 		/**
 		 * Add user to database
 		 */
@@ -189,6 +199,7 @@
 					VALUES ('%s', '%s')";
 			$this->query($sql, $email, sha1($password), $student_id, $society_id);
 		}
+		
 		
 		/**
 		 * Retrieves a user from the database
@@ -201,7 +212,6 @@
 			$result = $this->query($sql, $email);
 			return mysql_fetch_object($result);
 		}
-		
 		/**
 		 * Checks if a user exists
 		 */
@@ -209,6 +219,42 @@
 			if ($this->getUser($email) != false)
 				return true;
 			return false;
+		}
+		
+		
+		/**
+		 * Returns specified product
+		 */
+		function getProduct($id, $society_id) {
+			$sql = "SELECT products.product_id, products.product_name, products.price, products.available, societies.society_name, societies.society_id FROM `products`, `societies` WHERE products.society_id = societies.society_id AND products.product_id='%s'";
+		 	if ($society_id != null) $sql .= " AND products.society_id='%s'";
+		 	$result = $this->query($sql, $id, $society_id);
+		 	echo mysql_error();
+		 	if (mysql_num_rows($result) == 0) return false;
+		 	return mysql_fetch_object($result);
+		}
+		/**
+		 * Returns all products
+		 */
+		function getProducts($society_id) {
+		 	$sql = "SELECT products.product_id, products.product_name, products.price, products.available, societies.society_name FROM `products`, `societies` WHERE products.society_id = societies.society_id";
+		 	if ($society_id != null) $sql .= " AND products.society_id='%s'";
+		 	$result = $this->query($sql, $society_id);
+		 	if (mysql_num_rows($result) == 0) return false;
+		 	while ($row = mysql_fetch_object($result)) $rows[] = array($row->product_id, $row->product_name, "&pound;" . $row->price, str_replace(array(1, 0), array("Yes", "No"), $row->available), $row->society_name);
+		 	return $rows;
+		}
+		/**
+		 * Update or insert product
+		 */
+		function updateProduct($product_id, $name, $price, $available, $society_id) {
+			if ($product_id == null) {
+				$sql = "INSERT IGNORE INTO `products` (product_name, price, available, society_id) VALUES('%s', '%s', '%s', '%s')";
+				return $this->query($sql, $name, $price, $available, $society_id);
+			} else {
+				$sql = "UPDATE `products` SET product_name='%s', price='%s', available='%s', society_id='%s' WHERE product_id='%s'";
+				return $this->query($sql, $name, $price, $available, $society_id, $product_id);
+			}
 		}
 		
 		/**
@@ -235,7 +281,7 @@
 			$sql = "CREATE TABLE IF NOT EXISTS `societies` (
 					society_id int NOT NULL AUTO_INCREMENT,
 					email varchar(100),
-					name varchar(50),
+					society_name varchar(50),
 					PRIMARY KEY(society_id)
 					)";
 			$this->query($sql);
@@ -246,7 +292,7 @@
 			//Products table
 			$sql = "CREATE TABLE IF NOT EXISTS `products` (
 					product_id int NOT NULL AUTO_INCREMENT,
-					name varchar(100),
+					product_name varchar(100),
 					price DECIMAL(10, 2) NOT NULL,
 					society_id int DEFAULT 0,
 					available BOOL DEFAULT 1,
