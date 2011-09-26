@@ -48,7 +48,7 @@
 					if (strlen($name) < 1 || strlen($name) > 100) return $this->error($json, "Invalid Product name!");
 					if (preg_match('/^\d{1,10}\.\d\d$/', $price) == 0) return $this->error($json, "Invalid price format!");
 					if ($available != "1" && $available != "0") return $this->error($json, "Invalid value for available!");
-					
+					  
 					//New data
 					if (strlen($product_id) == 0) {
 						if ($parent->isAdmin()) return $this->error($json, "Root account may not add new products!");
