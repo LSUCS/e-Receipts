@@ -35,6 +35,9 @@
 				case 8:
 					echo "User added account deleted!";
 					break;
+				case 9:
+					echo "You do not have access to that page!";
+					break;
 			}
 			echo " Redirecting to index page...";
 			$parent->displayFooter();

@@ -1,0 +1,63 @@
+.societyTable {
+	width: 100%;
+}
+	.societyTable tbody tr {
+    	height: 40px;
+    	line-height: 40px;
+	}
+	.societyTable td {
+		padding: 5px;
+    	font-size: 14px;
+    	text-align: center;
+	}
+	.societyTable input {
+		text-align: center;
+	}
+	.societyTable .editable, .societyTable .selectable {
+    	cursor: pointer;
+	}
+	
+.DataTables_sort_wrapper {
+    font-size: 14px;
+}
+.DataTables_sort_icon {
+	float: right;
+	margin-left: -16px;
+}
+.dataTables_paginate {
+    font-size: 12px;
+}
+.dataTables_length {
+    font-size: 12px;
+}
+.dataTables_info {
+    font-size: 12px;
+}
+.dataTables_filter input {
+    padding: 2px !important;
+}
+.dataTables_wrapper {
+	min-height: 0px;
+	margin-bottom: 30px;
+}
+
+.societyName {
+	margin-left: 100px;
+	width: 210px;
+}
+.societyPrice {
+	margin-left: 15px;
+	width: 125px;
+}
+.availableDiv {
+	display: inline;
+	margin-left: 15px;
+}
+.availableDiv .selector {
+	margin-top: -4px;
+}
+.addSocietyButton {
+	font-size: 13px;
+	margin-left: 10px;
+	margin-bottom: 30px;
+}

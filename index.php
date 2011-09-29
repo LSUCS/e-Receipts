@@ -11,7 +11,8 @@
 		public $title = "Issue Receipt";
 		public $page;
 		public $get;
-		public $pages = array("actionresult", "login", "logout", "make", "view", "refund", "product", "accounts");
+		public $pages = array("actionresult", "login", "logout", "make", "view", "refund", "product", "accounts", "societies");
+		public $navbar = array();
 		public $user;
 		public $refresh = false;
 		public $loggedIn = false;
@@ -30,6 +31,13 @@
 			//See if there is a 'get' to do
 			if (isset($_GET["get"])) $this->get = strtolower($_GET["get"]);
 			else unset($this->get);
+			
+			//Add nav elements	
+			$this->addNavElement("index.php", "Issue Receipt", false, true);
+			$this->addNavElement("index.php?page=view", "View Receipts", false, true);
+			$this->addNavElement("index.php?page=product", "Product Management", false, true);
+			$this->addNavElement("index.php?page=societies", "Society Management", true, true);
+			$this->addNavElement("index.php?page=accounts", "Account Management", true, true);
 			
 			//Include requested page
 			if (!in_array($this->page, $this->pages)) {
@@ -79,14 +87,17 @@
 				</head>
 				<body>
                 	<div class="navBarBack">
-                	<?php if ($this->loggedIn) { ?>
 	                	<ul>
-	                    	<li><a href="index.php">Issue Receipt</a></li>
-	                        <li><a href="index.php?page=view">View Receipts</a></li>
-	                        <li><a href="index.php?page=product">Product Management</a></li>
-	                        <?php if ($this->isAdmin()) echo '<li><a href="index.php?page=accounts">Account Management</a></li>'; ?>
+                		<?php
+                		
+                			//Echo navbar
+                			foreach ($this->navbar as $element) {
+                				if ((($element["login"] && $this->loggedIn) || !$element["login"]) && (($element["admin"] && $this->isAdmin()) || !$element["admin"]))
+                					echo '<li><a href="' . $element["url"] . '">' . $element["title"] . '</a></li>';
+                			}
+	                        
+	                    ?>
 	                    </ul>
-                	<?php } ?>
                     </div>
                     <div class="mainContainer">
                         <div class="logoBar">
@@ -127,6 +138,11 @@
 			if (!$this->loggedIn) {
 				header("location:index.php?page=login&loggedin=true");
 			}
+		}
+		
+		//Adds an element to the NavBar
+		function addNavElement($url, $title, $requireAdmin, $requireLogin) {
+			$this->navbar[] = array("url" => $url, "title" => $title, "admin" => $requireAdmin, "login" => $requireLogin);
 		}
 		
 	}
@@ -256,6 +272,40 @@
 			}
 		}
 		
+				
+		/**
+		 * Returns specified society
+		 */
+		function getSociety($id) {
+			$sql = "SELECT * FROM `societies` WHERE society_id='%s'";
+		 	$result = $this->query($sql, $id);
+		 	if (mysql_num_rows($result) == 0) return false;
+		 	return mysql_fetch_object($result);
+		}
+		/**
+		 * Returns all societies
+		 */
+		function getSocieties() {
+		 	$sql = "SELECT * FROM `societies`";
+		 	$result = $this->query($sql);
+		 	if (mysql_num_rows($result) == 0) return false;
+		 	while ($row = mysql_fetch_object($result)) $rows[] = array($row->society_id, $row->society_name, $row->email);
+		 	return $rows;
+		}
+		/**
+		 * Update or insert product
+		 */
+		function updateSociety($society_id, $name, $email) {
+			if ($society_id == null) {
+				$sql = "INSERT IGNORE INTO `societies` (society_name, email) VALUES('%s', '%s')";
+				return $this->query($sql, $name, $email);
+			} else {
+				$sql = "UPDATE `societies` SET society_name='%s', email='%s' WHERE society_id='%s'";
+				return $this->query($sql, $name, $email, $society_id);
+			}
+		}
+ 
+		
 		/**
 		 * Creates default tables if they don't exist
 		 */
@@ -284,8 +334,8 @@
 					PRIMARY KEY(society_id)
 					)";
 			$this->query($sql);
-			$sql = "INSERT IGNORE INTO `societies` (email, society_name)
-					VALUES ('committee@lsucs.org.uk', 'LSUCS')";
+			$sql = "INSERT IGNORE INTO `societies` (society_id, email, society_name)
+					VALUES (1, 'committee@lsucs.org.uk', 'LSUCS')";
 			$this->query($sql);
 			
 			//Products table
