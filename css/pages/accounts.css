@@ -1,19 +1,19 @@
-.societyTable {
+.accountTable {
 	width: 100%;
 }
-	.societyTable tbody tr {
+	.accountTable tbody tr {
     	height: 40px;
     	line-height: 40px;
 	}
-	.societyTable td {
+	.accountTable tbody td {
 		padding: 5px;
     	font-size: 14px;
     	text-align: center;
 	}
-	.societyTable input {
+	.accountTable input {
 		text-align: center;
 	}
-	.societyTable .editable, .societyTable .selectable {
+	.accountTable .editable, .accountTable .selectable {
     	cursor: pointer;
 	}
 	
@@ -41,11 +41,23 @@
 	margin-bottom: 30px;
 }
 
-.societyName {
-	margin-left: 140px;
-	width: 210px;
+.accountEmail {
+	width: 150px;
+	margin-left: 12px;
 }
-.addSocietyButton {
+.accountStudentId {
+	width: 100px;
+}
+.accountPassword {
+	width: 100px;
+}
+.accountActive {
+	width: 70px;
+}
+.societySpan .selector {
+	margin-top: -4px;
+}
+.addAccountButton {
 	font-size: 13px;
 	margin-left: 10px;
 	margin-bottom: 30px;

@@ -51,7 +51,7 @@
 		
 		//Setup user from username
 		function loadUser($username) {
-			$this->user = new User($username, $this->db);
+			$this->user = $this->db->getUser($username);
 			$this->loggedIn = true;
 		}
 		
@@ -198,6 +198,14 @@
 		
 		
 		/**
+		 * Checks if a user exists
+		 */
+		function userExists($email) {
+			if ($this->getUser($email) != false)
+				return true;
+			return false;
+		}	
+		/**
 		 * Check if email and password are valid
 		 */
 		function checkLoginDetails($email, $password) {
@@ -215,27 +223,27 @@
 					VALUES ('%s', '%s')";
 			$this->query($sql, $email, sha1($password), $student_id, $society_id);
 		}
-		
-		
 		/**
 		 * Retrieves a user from the database
 		 */
 		function getUser($email) {
 			if (is_numeric($email))
-				$sql = "SELECT * FROM `users` WHERE user_id=%s";
+				$sql = "SELECT users.user_id, users.student_id, users.email, users.password, users.society_id, users.active, societies.society_name FROM `users`, `societies` WHERE societies.society_id=users.society_id AND user_id=%s";
 			else
-				$sql = "SELECT * FROM `users` WHERE UPPER(email)=UPPER('%s')";
+				$sql = "SELECT users.user_id, users.student_id, users.email, users.password, users.society_id, users.active, societies.society_name FROM `users`, `societies` WHERE societies.society_id=users.society_id AND UPPER(users.email)=UPPER('%s')";
 			$result = $this->query($sql, $email);
 			return mysql_fetch_object($result);
 		}
 		/**
-		 * Checks if a user exists
+		 * Returns all users from the database
 		 */
-		function userExists($email) {
-			if ($this->getUser($email) != false)
-				return true;
-			return false;
-		}
+		 function getUsers() {
+		 	$sql = "SELECT users.user_id, users.email, users.student_id, users.password, users.active, societies.society_name FROM `users`, `societies` WHERE societies.society_id=users.society_id";
+		 	$result = $this->query($sql);
+		 	if (mysql_num_rows($result) == 0) return false;
+		 	while ($row = mysql_fetch_row($result)) $rows[] = $row;
+		 	return $rows;
+		 }
 		
 		
 		/**
@@ -252,7 +260,7 @@
 		 * Returns all products
 		 */
 		function getProducts($society_id) {
-		 	$sql = "SELECT products.product_id, products.product_name, products.price, products.available, societies.society_name FROM `products`, `societies` WHERE products.society_id = societies.society_id";
+		 	$sql = "SELECT products.product_id, products.product_name, products.price, products.available, societies.society_name, societies.society_id FROM `products`, `societies` WHERE products.society_id = societies.society_id";
 		 	if ($society_id != null) $sql .= " AND products.society_id='%s'";
 		 	$result = $this->query($sql, $society_id);
 		 	if (mysql_num_rows($result) == 0) return false;
@@ -314,16 +322,16 @@
 			//User table
 			$sql = "CREATE TABLE IF NOT EXISTS `users` (
 					user_id int NOT NULL AUTO_INCREMENT,
-					student_id varchar(30),
 					email varchar(100),
+					student_id varchar(30),
 					password varchar(50),
 					society_id int DEFAULT 0,
 					active BOOL DEFAULT 1,
 					PRIMARY KEY(user_id)
 					)";
 			$this->query($sql);
-			$sql = "INSERT INTO `users` (email, password)
-					VALUES ('admin', '%s')";
+			$sql = "INSERT IGNORE INTO `users` (email, password, society_id)
+					VALUES ('admin', '%s', 1)";
 			if (!$this->userExists("admin")) $this->query($sql, sha1("adminpass"));
 			
 			//Society table
