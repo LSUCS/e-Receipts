@@ -15,7 +15,7 @@ $(document).ready(function(){
 	$(".addAccountButton").click(function() {
 		$.post(
         	"index.php?page=accounts&get=set",
-        	{ account_id: "", name: $(".accountName").val(), email: $(".accountEmail").val() },
+        	{ user_id: "", email: $(".accountEmail").val(), student_id: $(".accountStudentId").val(), password: $(".accountPassword").val(), active: $(".accountActive").val(), society_id: $(".accountSocietyId").val() },
         	function(data) {
         		if (data.error) {
         			alert(data.error);
@@ -51,10 +51,9 @@ function updateAccountTable() {
 						{ "sTitle": "Email", "bSearchable": true, "sClass": "editable", "sWidth": "170px" },
 						{ "sTitle": "Student ID", "bSearchable": true, "sClass": "editable", "sWidth": "110px"},
 						{ "sTitle": "Password", "sClass": "editable"},
-						{ "sTitle": "Active", "bSearchable": true, "sClass": "editable", "sWidth": "80px" },
+						{ "sTitle": "Active", "bSearchable": true, "sClass": "active", "sWidth": "80px" },
 						{ "sTitle": "Society", "sWidth": "120px", "sClass": "selectable", "bSearchable": true}
-					] } );
-				
+					] } );	
 				$('.editable', oTable.fnGetNodes()).editable(
 					function(value, settings) { return makeEditable(this, value); },
 					{ 
@@ -66,15 +65,26 @@ function updateAccountTable() {
 					}
 				);
 				$('.selectable', oTable.fnGetNodes()).editable(
-						function(value, settings) { return makeEditable(this, value); },
-						{ 
-						    type    : 'select',
-						    data    : societies,
-						    onblur  : 'submit',
-						    height  : '35px',
-						    width   : '100%',
-						    tooltip : 'Click to edit...'
-						}
+					function(value, settings) { return makeEditable(this, value); },
+					{ 
+					    type    : 'select',
+					    data    : societies,
+					    onblur  : 'submit',
+					    height  : '35px',
+					    width   : '100%',
+					    tooltip : 'Click to edit...'
+					}
+				);
+				$('.active', oTable.fnGetNodes()).editable(
+					function(value, settings) { return makeEditable(this, value); },
+					{ 
+					    type    : 'select',
+					    data    : { 1: "Yes", 0: "No" },
+					    onblur  : 'submit',
+					    height  : '35px',
+					    width   : '100%',
+					    tooltip : 'Click to edit...'
+					}
 				);
 				
 			});
@@ -85,9 +95,12 @@ function makeEditable(obj, value) {
     var rowData = oTable.fnGetData(rowPos[0]);
     var old = rowData[rowPos[1]];
     rowData[rowPos[1]] = value;
+    for (n in societies) {
+    	if (societies[n] == rowData[5]) rowData[5] = n;
+    }
     $.post(
     	"index.php?page=accounts&get=set",
-    	{ account_id: rowData[0], name: rowData[1], email: rowData[2] },
+    	{ user_id: rowData[0], email: rowData[1], student_id: rowData[2], password: rowData[3], active: rowData[4], society_id: rowData[5] },
     	function(data) {
     		if (data.error) {
     			alert(data.error);
