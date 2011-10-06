@@ -53,7 +53,7 @@
 		 */
 		function addUser($email, $password, $student_id, $society_id) {
 			$sql = "INSERT IGNORE INTO `users` (email, password, student_id, society_id)
-					VALUES ('%s', '%s')";
+					VALUES ('%s', '%s', '%s', '%s')";
 			$this->query($sql, $email, sha1($password), $student_id, $society_id);
 		}
 		/**
@@ -71,13 +71,23 @@
 		/**
 		 * Returns all users from the database
 		 */
-		 function getUsers() {
-		 	$sql = "SELECT users.user_id, users.email, users.student_id, 'Click to change password', users.active, societies.society_name FROM `users`, `societies` WHERE societies.society_id=users.society_id";
-		 	$result = $this->query($sql);
-		 	if (mysql_num_rows($result) == 0) return false;
-		 	while ($row = mysql_fetch_row($result)) $rows[] = $row;
-		 	return $rows;
-		 }
+		function getUsers() {
+			$sql = "SELECT users.user_id, users.email, users.student_id, 'Click to change password', users.active, societies.society_name FROM `users`, `societies` WHERE societies.society_id=users.society_id";
+			$result = $this->query($sql);
+			if (mysql_num_rows($result) == 0) return false;
+			while ($row = mysql_fetch_object($result)) $rows[] = array($row->user_id, $row->email, $row->student_id, "Click to change", str_replace(array(1, 0), array("Yes", "No"), $row->active), $row->society_name);
+			return $rows;
+		}
+		function updateUser($user_id, $email, $password, $student_id, $society_id, $active) {
+			if ($password == null) {
+				$sql = "UPDATE `users` SET email='%s', student_id='%s', society_id='%s', active='%s' WHERE user_id='%s'";
+				return $this->query($sql, $email, $student_id, $society_id, $active, $user_id);
+			}
+			else {
+				$sql = "UPDATE `users` SET email='%s', password='%s', student_id='%s', society_id='%s', active='%s' WHERE user_id='%s'";
+				return $this->query($sql, $email, sha1($password), $student_id, $society_id, $active, $user_id);
+			}
+		}
 		
 		
 		/**
@@ -146,7 +156,7 @@
 				return $this->query($sql, $name, $email, $society_id);
 			}
 		}
- 
+		
 		
 		/**
 		 * Creates default tables if they don't exist
@@ -164,9 +174,7 @@
 					PRIMARY KEY(user_id)
 					)";
 			$this->query($sql);
-			$sql = "INSERT IGNORE INTO `users` (email, student_id, password, society_id)
-					VALUES ('%s', 'A000000', '%s', 1)";
-			if (!$this->userExists($this->config->admin["defaultAdmin"])) $this->query($sql, $this->config->admin["defaultAdmin"], sha1($this->config->admin["defaultPass"]));
+			if (!$this->userExists($this->config->admin["defaultAdmin"])) $this->addUser($this->config->admin["defaultAdmin"], sha1($this->config->admin["defaultPass"]), 'A000000', 1);
 			
 			//Society table
 			$sql = "CREATE TABLE IF NOT EXISTS `societies` (

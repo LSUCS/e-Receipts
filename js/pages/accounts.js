@@ -15,7 +15,7 @@ $(document).ready(function(){
 	$(".addAccountButton").click(function() {
 		$.post(
         	"index.php?page=accounts&get=set",
-        	{ user_id: "", email: $(".accountEmail").val(), student_id: $(".accountStudentId").val(), password: $(".accountPassword").val(), active: $(".accountActive").val(), society_id: $(".accountSocietyId").val() },
+        	{ user_id: "", email: $(".accountEmail").val(), student_id: $(".accountStudentId").val(), password: $(".accountPassword").val(), active: '1', society_id: $(".accountSociety").val() },
         	function(data) {
         		if (data.error) {
         			alert(data.error);
@@ -23,8 +23,10 @@ $(document).ready(function(){
         		}
         		alert("Account Added!");
         		updateAccountTable();
-        		$(".accountName").val("");
-        		$(".accountEmail").val("");
+        		$(".accountEmail").val("Email");
+        		$(".accountStudentId").val("Student ID");
+        		$(".accountPassword").val("Pass");
+        		
         	},
         	"json"
         );
@@ -48,11 +50,11 @@ function updateAccountTable() {
                     "sDom": '<"H"ipr>t<"F"lf>',
 					"aoColumns": [
 						{ "sTitle": "ID", "sWidth": "60px", "sClass": "idcell" },
-						{ "sTitle": "Email", "bSearchable": true, "sClass": "editable", "sWidth": "170px" },
-						{ "sTitle": "Student ID", "bSearchable": true, "sClass": "editable", "sWidth": "110px"},
-						{ "sTitle": "Password", "sClass": "editable"},
+						{ "sTitle": "Email", "bSearchable": true, "sClass": "editable" },
+						{ "sTitle": "Student ID", "bSearchable": true, "sClass": "editable", "sWidth": "110px" },
+						{ "sTitle": "Password", "sClass": "editable", "sWidth": "130px" },
 						{ "sTitle": "Active", "bSearchable": true, "sClass": "active", "sWidth": "80px" },
-						{ "sTitle": "Society", "sWidth": "120px", "sClass": "selectable", "bSearchable": true}
+						{ "sTitle": "Society", "sWidth": "150px", "sClass": "selectable", "bSearchable": true}
 					] } );	
 				$('.editable', oTable.fnGetNodes()).editable(
 					function(value, settings) { return makeEditable(this, value); },
@@ -105,6 +107,9 @@ function makeEditable(obj, value) {
     		if (data.error) {
     			alert(data.error);
     			return;
+    		}
+    		if (data.password) {
+    			alert("Password changed!");
     		}
     		$(".accountTable tbody .idcell").each(
         		function() {

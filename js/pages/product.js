@@ -15,9 +15,8 @@ $(document).ready(function(){
         		}
         		alert("Product Added!");
         		updateProductTable();
-        		$(".productName").val("");
-        		$(".productPrice").val("");
-        		$(".productAvailable").val("");
+        		$(".productName").val("Product Name");
+        		$(".productPrice").val("Price");
         	},
         	"json"
         );

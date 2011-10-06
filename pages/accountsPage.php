@@ -66,21 +66,25 @@
 					if (!$society) return $this->error($json, "Invalid society!");
 					
 					//Sort out password
-					if ($password == "Click to change password") $password = null;
-					if (strlen($password) < 6 && $password != null) return $this->error($json, "Password must be longer than 6 characters!");
+					if (strlen($password) < 6) return $this->error($json, "Password must be longer than 6 characters!");
+					if ($password == "Click to change") $password = null;
 					
 					//New data
 					if (strlen($user_id) == 0) {
-						$parent->db->addUser($email, $password, $student_id, $society_id);
+						if ($password == null) return $this->error($json, "Password is required when adding account");
+						$parent->db->addUser($email, $password, $student_id, $society_id, $active);
 						echo json_encode($json);
 						return;
 					}
 					
 					//Update data
-					$parent->db->updateUser($user_id, $email, $password, $student_id, $society_id);
+					$parent->db->updateUser($user_id, $email, $password, $student_id, $society_id, $active);
+					
+					//If password has been changed, set for alert
+					if ($password != null) $json["password"] = true;
 						
 					//Sort out data and echo out the JSON
-					$json["data"] = array($user_id, $email, $student_id, "Click to change password", str_replace(array(1, 0), array("Yes", "No"), $active), $society->society_name);
+					$json["data"] = array($user_id, $email, $student_id, "Click to change", str_replace(array(1, 0), array("Yes", "No"), $active), $society->society_name);
 					echo json_encode($json);
 					
 				}
@@ -104,8 +108,7 @@
 			</div>
 			<input class="accountEmail" type="text" name="email" value="Email" />
 			<input class="accountStudentId" type="text" name="studentId" value="Student ID" />
-			<input class="accountPassword" type="text" name="password" value="Password" />
-			<input class="accountActive" type="text" name="active" value="Active" />
+			<input class="accountPassword" type="password" name="password" value="Pass" />
 			<span class="societySpan"><select class="accountSociety" name="society">
 				<?php foreach ($parent->db->getSocieties() as $society) echo "<option value='".$society[0]."'>".$society[1]."</option>"; ?>
 			</select></span>
