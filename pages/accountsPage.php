@@ -57,21 +57,21 @@
 					$json = array();
 					
 					//Error checking
-					if (preg_match('/^[a-z]\d{6}$/i', $student_id) == 0) return $this->error($json, "Invalid student ID!");
-					if ($active != "1" && $active != "0") return $this->error($json, "Invalid value for active!");
-					if (preg_match('/^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff]))(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff])|\.(?=[^\.])){1,62}(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff])|[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]{1,2})|"(?:[^"]|(?<=\x5c)"){1,62}")@(?:(?!.{64})(?:[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.?|[a-zA-Z0-9]\.?)+\.(?:xn--[a-zA-Z0-9]+|[a-zA-Z]{2,6})|\[(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])){3}\])$/ ', $email) == 0) return $this->error($json, "Invalid email format!");
+					if (preg_match('/^[a-z]\d{6}$/i', $student_id) == 0) return $parent->errorJSON($json, "Invalid student ID!");
+					if ($active != "1" && $active != "0") return $parent->errorJSON($json, "Invalid value for active!");
+					if (preg_match('/^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff]))(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff])|\.(?=[^\.])){1,62}(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff])|[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]{1,2})|"(?:[^"]|(?<=\x5c)"){1,62}")@(?:(?!.{64})(?:[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.?|[a-zA-Z0-9]\.?)+\.(?:xn--[a-zA-Z0-9]+|[a-zA-Z]{2,6})|\[(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])){3}\])$/ ', $email) == 0) return $parent->errorJSON($json, "Invalid email format!");
 					 
 					//Check if society actually exists
 					$society = $parent->db->getSociety($society_id);
-					if (!$society) return $this->error($json, "Invalid society!");
+					if (!$society) return $parent->errorJSON($json, "Invalid society!");
 					
 					//Sort out password
-					if (strlen($password) < 6) return $this->error($json, "Password must be longer than 6 characters!");
+					if (strlen($password) < 6) return $parent->errorJSON($json, "Password must be longer than 6 characters!");
 					if ($password == "Click to change") $password = null;
 					
 					//New data
 					if (strlen($user_id) == 0) {
-						if ($password == null) return $this->error($json, "Password is required when adding account");
+						if ($password == null) return $parent->errorJSON($json, "Password is required when adding account");
 						$parent->db->addUser($email, $password, $student_id, $society_id, $active);
 						echo json_encode($json);
 						return;
@@ -117,12 +117,6 @@
 			<?php
 			$parent->displayFooter();
 			
-		}
-		
-		function error($json, $message) {
-			$json["error"] = $message;
-			echo json_encode($json);
-			return;
 		}
 		
 	}

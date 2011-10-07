@@ -45,13 +45,13 @@
 					$json = array();
 					
 					//Error checking
-					if (strlen($name) < 1 || strlen($name) > 100) return $this->error($json, "Invalid Product name!");
-					if (preg_match('/^\d{1,10}\.\d\d$/', $price) == 0) return $this->error($json, "Invalid price format!");
-					if ($available != "1" && $available != "0") return $this->error($json, "Invalid value for available!");
+					if (strlen($name) < 1 || strlen($name) > 100) return $parent->errorJSON($json, "Invalid Product name!");
+					if (preg_match('/^\d{1,10}\.\d\d$/', $price) == 0) return $parent->errorJSON($json, "Invalid price format!");
+					if ($available != "1" && $available != "0") return $parent->errorJSON($json, "Invalid value for available!");
 					  
 					//New data
 					if (strlen($product_id) == 0) {
-						if ($parent->isAdmin()) return $this->error($json, "Root account may not add new products!");
+						if ($parent->isAdmin()) return $parent->errorJSON($json, "Root account may not add new products!");
 						$parent->db->updateProduct(strlen($product_id) == 0 ? null:$product_id, $name, $price, $available, $parent->user->society_id);
 						echo json_encode($json);
 						return;
@@ -59,7 +59,7 @@
 					
 					//Check if product actually exists
 					$product = $parent->db->getProduct($product_id, $parent->isAdmin()? null : $parent->user->society_id);
-					if (!$product) return $this->error($json, "Invalid product ID!");
+					if (!$product) return $parent->errorJSON($json, "Invalid product ID!");
 					
 					//Update data
 					$parent->db->updateProduct($product_id, $name, $price, $available, $product->society_id);
@@ -95,12 +95,6 @@
 			<?php
 			$parent->displayFooter();
 			
-		}
-		
-		function error($json, $message) {
-			$json["error"] = $message;
-			echo json_encode($json);
-			return;
 		}
 		
 	}

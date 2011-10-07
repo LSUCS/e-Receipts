@@ -159,6 +159,15 @@
 		
 		
 		/**
+		 * Adds a receipt to the database
+		 */
+		function addReceipt($user_id, $email, $name, $student_id, $products, $comments) {
+			$sql = "INSERT INTO `receipts` (user_id, email, name, student_id, products, comments) VALUES('%s', '%s', '%s', '%s', '%s', '%s')";
+			return $this->query($sql, $user_id, $email, $name, $student_id, $products, $comments);
+		}
+		
+		
+		/**
 		 * Creates default tables if they don't exist
 		 */
 		private function createTables() {
@@ -203,9 +212,11 @@
 			$sql = "CREATE TABLE IF NOT EXISTS `receipts` (
 					receipt_id int NOT NULL AUTO_INCREMENT,
 					user_id int,
+					student_id varchar(30),
 					email varchar(100),
 					name varchar(100),
 					comments text,
+					products varchar(100),
 					PRIMARY KEY(receipt_id)
 					)";
 			$this->query($sql);

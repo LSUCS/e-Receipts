@@ -10,25 +10,44 @@
 		margin-left: 27px;
 	}
 	.makeForm .nameBox {
-		margin-left: 24px;
+		margin-left: 25px;
 	}
+	
+	.makeForm .selectedProducts {
+		width: 256px;
+		margin-top: 10px;
+		border-radius: 5px;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border: 1px solid #999;
+	}
+	
 	.makeForm .removeButton {
-		height: 25px;
-		width: 80px;
+		width: 110px;
 		font-size: 12px;
 		margin-left: 10px;
 	}
-		.makeForm .removeButton span {
-			margin-top: -2px;
-			margin-left: -1px;
-		}
 	.makeForm .addButton {
-		height: 25px;
-		width: 50px;
+		width: 110px;
 		font-size: 12px;
 		margin-left: 10px;
-		margin-top: 4px;
+		margin-top: 10px;
 	}
-		.makeForm .addButton span {
-			margin-top: -1px;
-		}
+		
+	.makeForm .selectProductDiv {
+		margin-top: 10px;
+		margin-left: 30px;
+	}
+	
+	.makeForm .submitButton {
+		margin-left: 77px;
+		margin-top: 10px;
+	}
+	
+	.makeForm .receiptComments {
+		width: 256px;
+		resize: none;
+		margin-top: 10px;
+		height: 80px;
+		color: #999;
+	}

@@ -5,6 +5,7 @@
 		public $database;
 		public $general;
 		public $admin;
+		public $receipt;
 		
 		function __construct() {
 			
@@ -29,6 +30,13 @@
 			$this->admin["adminAccounts"] = array( "admin@lsucs.org.uk", "admin@socfed.co.uk" );
 			$this->admin["defaultAdmin"]  = "admin@lsucs.org.uk";
 			$this->admin["defaultPass"]   = "adminpass";
+			
+			/**
+			 * Receipt control
+			 */
+			$this->receipt["fromEmail"]   = "LSU SocFed Receipts <committee@lsucs.org.uk>";
+			$this->receipt["receiptTitle"]  = "Receipt for your payment to %SOCIETY%"; #%SOCIETY% is replaced with the society name
+			
 			
 		}
 		

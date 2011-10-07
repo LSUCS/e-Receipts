@@ -3,6 +3,7 @@
 	//Includes
 	include("db.php");
 	include("config.php");
+	include("email.php");
 	
 	//Start up sessions and initiate main class
 	session_start();
@@ -48,7 +49,7 @@
 			
 			//Include requested page
 			if (!in_array($this->page, $this->pages)) {
-				$this->page = $this->defaultPage;
+				$this->page = $this->config->general["defaultPage"];
 			}
 			include("pages/".$this->page."Page.php");
 			$child = new $this->page;
@@ -97,7 +98,7 @@
                 	<div class="navBarBack">
 	                	<ul>
                 		<?php
-                		
+                			
                 			//Echo navbar
                 			foreach ($this->navbar as $element) {
                 				if ((($element["login"] && $this->loggedIn) || !$element["login"]) && (($element["admin"] && $this->isAdmin()) || !$element["admin"]))
@@ -152,6 +153,13 @@
 		//Adds an element to the NavBar
 		function addNavElement($url, $title, $requireAdmin, $requireLogin) {
 			$this->navbar[] = array("url" => $url, "title" => $title, "admin" => $requireAdmin, "login" => $requireLogin);
+		}
+		
+		//Issue a JSON error
+		function errorJSON($json, $msg) {
+			$json["error"] = $msg;
+			echo json_encode($json);
+			return;
 		}
 		
 	}
