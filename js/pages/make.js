@@ -2,6 +2,8 @@ $(document).ready(function(){
 	
 	$("input:button").button();
 	
+	
+	
 	$(".addButton").click(function() {
 		sel = $(".selectProduct option:selected");
 		$(".selectedProducts").append("<option value='" + sel.val() + "'>" + sel.text() + '</option>');

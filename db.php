@@ -161,9 +161,19 @@
 		/**
 		 * Adds a receipt to the database
 		 */
-		function addReceipt($user_id, $email, $name, $student_id, $products, $comments) {
-			$sql = "INSERT INTO `receipts` (user_id, email, name, student_id, products, comments) VALUES('%s', '%s', '%s', '%s', '%s', '%s')";
-			return $this->query($sql, $user_id, $email, $name, $student_id, $products, $comments);
+		function addReceipt($user_id, $email, $name, $student_id, $products, $comments, $society_id) {
+			$sql = "INSERT INTO `receipts` (user_id, email, name, student_id, products, comments, society_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+			return $this->query($sql, $user_id, $email, $name, $student_id, $products, $comments, $society_id);
+		}
+		/**
+		 * Returns all receipts
+		 */
+		function getReceipts($society_id) {
+		 	$sql = "SELECT * FROM `receipts`";
+		 	$result = $this->query($sql);
+		 	if (mysql_num_rows($result) == 0) return false;
+		 	while ($row = mysql_fetch_object($result)) $rows[] = array($row->society_id, $row->society_name, $row->email);
+		 	return $rows;
 		}
 		
 		
@@ -217,6 +227,7 @@
 					name varchar(100),
 					comments text,
 					products varchar(100),
+					society_id int,
 					PRIMARY KEY(receipt_id)
 					)";
 			$this->query($sql);

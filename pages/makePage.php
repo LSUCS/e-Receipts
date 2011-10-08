@@ -10,6 +10,10 @@
 				//If not logged in, GTFO
 				if (!$parent->loggedIn) return;
 				
+				if ($parent->get == "emails") {
+					$parent->db->getReceipts($parent->user->society_id);
+				}
+				
 				//Set data
 				if ($parent->get == "set") {
 					
@@ -41,9 +45,10 @@
 					}
 					
 					//Add to database
-					if (!$parent->db->addReceipt($parent->user->user_id, $emailAddr, $name, $student_id, $products, $comments)) {
+					if (!$parent->db->addReceipt($parent->user->user_id, $emailAddr, $name, $student_id, $products, $comments, $parent->user->society_id)) {
 						return $parent->errorJSON($json, "Unable to store receipt!" . mysql_error());
 					}
+					
 					//Send email
 					$email = new Email($parent->config);
 					$email->addHeader("Bcc", $society->email);
