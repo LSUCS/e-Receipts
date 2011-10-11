@@ -23,7 +23,7 @@
 					//If required POST isn't present
 					if (!isset($_POST["email"]) || !isset($_POST["name"]) || !isset($_POST["products"]) || !isset($_POST["student_id"]) || !isset($_POST["comments"])) return $parent->errorJSON($json, "Stop trying to break me!");
 					
-					$emailAddr      = $_POST["email"];
+					$emailAddr  = $_POST["email"];
 					$name       = $_POST["name"];
 					$products   = $_POST["products"];
 					$student_id = $_POST["student_id"];

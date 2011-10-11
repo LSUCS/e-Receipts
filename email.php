@@ -8,9 +8,13 @@
 		private $headers = array();
 		
 		function __construct($config) {
+			
+			require_once "Mail.php";
+			
 			$this->addHeader("From", $config->receipt["fromEmail"]);
 			$this->addHeader("MIME-Version",  "1.0");
 			$this->addHeader("Content-type", "text/html; charset=iso-8859-1");
+			
 		}
 		
 		/**
@@ -45,9 +49,19 @@
 		 * Sends the email
 		 */
 		function send() {
-			$headers = "";
-			foreach ($this->headers as $key => $val) $headers .= $key . ": " . $val . "\r\n";
-			return @mail($this->to, $this->subject, $this->message, $headers);
+			
+        	$smtp = Mail::factory('smtp',
+          		array ('host' => $config->email["host"],
+            		   'port' => $config->email["port"],
+                       'auth' => true,
+                       'username' => $config->email["user"],
+                       'password' => $config->email["pass"]));
+
+        	$mail = $smtp->send($this->to, $this->headers, $this->message);
+
+	        if (PEAR::isError($mail)) return false;
+			return true;
+			
 		}
 		
 	}
