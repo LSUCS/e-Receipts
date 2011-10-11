@@ -43,19 +43,19 @@
 						if (strlen($product) == 0 || !is_numeric($product) || !$parent->db->getProduct($product, null)) return $parent->errorJSON($json, "Invalid product ID!");
 						$productArray[$key] = $parent->db->getProduct($product, null);
 					}
-					
+
+					//Send email
+                                        $email = new Email($parent->config);
+                                        $email->addHeader("Bcc", $society->email);
+                                        $email->setTo($emailAddr);
+                                        $email->addHeader("Subject", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
+                                        $email->setMessage(file_get_contents('templates/receipt/receipt.html'));
+                                        if (!$email->send()) return $parent->errorJSON($json, "Unable to send email receipt!");
+
 					//Add to database
 					if (!$parent->db->addReceipt($parent->user->user_id, $emailAddr, $name, $student_id, $products, $comments, $parent->user->society_id)) {
 						return $parent->errorJSON($json, "Unable to store receipt!" . mysql_error());
 					}
-					
-					//Send email
-					$email = new Email($parent->config);
-					$email->addHeader("Bcc", $society->email);
-					$email->setTo($emailAddr);
-					$email->setSubject(str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
-					$email->setMessage("Hello dave");
-					if (!$email->send()) return $parent->errorJSON($json, "Unable to send email receipt!");
 					
 					echo json_encode($json);
 					

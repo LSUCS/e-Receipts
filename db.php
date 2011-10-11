@@ -193,7 +193,7 @@
 					PRIMARY KEY(user_id)
 					)";
 			$this->query($sql);
-			if (!$this->userExists($this->config->admin["defaultAdmin"])) $this->addUser($this->config->admin["defaultAdmin"], sha1($this->config->admin["defaultPass"]), 'A000000', 1);
+			if (!$this->userExists($this->config->admin["defaultAdmin"])) $this->addUser($this->config->admin["defaultAdmin"], $this->config->admin["defaultPass"], 'A000000', 1);
 			
 			//Society table
 			$sql = "CREATE TABLE IF NOT EXISTS `societies` (
