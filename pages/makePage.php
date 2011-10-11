@@ -43,14 +43,36 @@
 						if (strlen($product) == 0 || !is_numeric($product) || !$parent->db->getProduct($product, null)) return $parent->errorJSON($json, "Invalid product ID!");
 						$productArray[$key] = $parent->db->getProduct($product, null);
 					}
+					
+					//Format product table for email
+					$prodTable = "<table><tr><td>Product</td><td>Price</td></tr>";
+					$total = 0;
+					foreach ($productArray as $key => $product) {
+						$prodTable .= "<tr><td>" . $product->product_name . "</td><td>&pound;" . $product->price . "</td></tr>";
+						$total += $product->price;
+					}
+					$prodTable .="<tr><td>Order Total</td><td>" . $total . "</td></tr></table>";
+									
+					//Set up email template
+					$template = new Template("receipt");
+                    $template->addKey("%TITLE%", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
+                    $template->addKey("%SOCIETY%", $society->society_name);
+                    $template->addKey("%SOCEMAIL%", $society->email);
+                    $template->addKey("%SOCFEDEMAIL%", $parent->config->receipt["socfedEmail"]);
+                    $template->addKey("%CUSTNAME%", $name);
+                    $template->addKey("%CUSTEMAIL", $emailAddr);
+                    $template->addKey("%CUSTID%", $student_id == null?"N/A":$student_id);
+                    $template->addKey("%ORDERDATE%", date('l jS \of F Y h:i:s A'));
+                    $template->addKey("%PRODTABLE%", $prodTable);
+                    $template->addKey("%ORDERTOTAL", $total);
 
 					//Send email
-                                        $email = new Email($parent->config);
-                                        $email->addHeader("Bcc", $society->email);
-                                        $email->setTo($emailAddr);
-                                        $email->addHeader("Subject", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
-                                        $email->setMessage(file_get_contents('templates/receipt/receipt.html'));
-                                        if (!$email->send()) return $parent->errorJSON($json, "Unable to send email receipt!");
+                    $email = new Email($parent->config);
+                    $email->addHeader("Bcc", $society->email);
+                    $email->setTo($emailAddr);
+                    $email->addHeader("Subject", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
+                    $email->setMessage($template->format());
+                    if (!$email->send()) return $parent->errorJSON($json, "Unable to send email receipt!");
 
 					//Add to database
 					if (!$parent->db->addReceipt($parent->user->user_id, $emailAddr, $name, $student_id, $products, $comments, $parent->user->society_id)) {

@@ -16,7 +16,7 @@
 			$this->database["host"] = "localhost";
 			$this->database["user"] = "root";
 			$this->database["pass"] = "";
-			$this->database["db"]   = "lan";
+			$this->database["db"]   = "receipts";
 			
 			/**
 			 * General settings
@@ -36,6 +36,7 @@
 			 * Receipt control
 			 */
 			$this->receipt["receiptTitle"]  = "Receipt for your payment to %SOCIETY%"; #%SOCIETY% is replaced with the society name
+			$this->receipt["socfedEmail"]   = "socfed@lufbra.net";
 			
 			/**
 			 * Email control

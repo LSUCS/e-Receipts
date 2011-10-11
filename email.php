@@ -52,7 +52,7 @@
                        'password' => $this->config->email["pass"]));
 
         	$mail = $smtp->send($this->to, $this->headers, $this->message);
-	
+			echo $mail;	
 	        if (PEAR::isError($mail)) return false;
 			return true;
 			
