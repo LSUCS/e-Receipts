@@ -14,7 +14,7 @@
 			 * Database settings
 			 */
 			$this->database["host"] = "localhost";
-			$this->database["user"] = "receipts";
+			$this->database["user"] = "root";
 			$this->database["pass"] = "";
 			$this->database["db"]   = "receipts";
 			

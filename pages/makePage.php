@@ -123,6 +123,10 @@
 				</form>
 			</div>
 			
+			<div class="overlay">
+				Please wait...
+			</div>
+			
 			<?php
 			$parent->displayFooter();
 			
