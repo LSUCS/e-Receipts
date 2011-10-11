@@ -162,17 +162,18 @@
 		 * Adds a receipt to the database
 		 */
 		function addReceipt($user_id, $email, $name, $student_id, $products, $comments, $society_id) {
-			$sql = "INSERT INTO `receipts` (user_id, email, name, student_id, products, comments, society_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+			$sql = "INSERT INTO `receipts` (user_id, cust_email, name, student_id, products, comments, society_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 			return $this->query($sql, $user_id, $email, $name, $student_id, $products, $comments, $society_id);
 		}
 		/**
 		 * Returns all receipts
 		 */
 		function getReceipts($society_id) {
-		 	$sql = "SELECT * FROM `receipts`";
-		 	$result = $this->query($sql);
+		 	$sql = "SELECT receipts.receipt_id, receipts.student_id, receipts.cust_email, receipts.name, receipts.comments, receipts.products, societies.society_name, societies.society_id, users.user_id, users.email FROM `receipts`, `societies`, `users` WHERE receipts.society_id = societies.society_id AND users.user_id = receipts.user_id";
+		 	if ($society_id != null) $sql .= " AND receipts.society_id='%s'";
+		 	$result = $this->query($sql, $society_id);
 		 	if (mysql_num_rows($result) == 0) return false;
-		 	while ($row = mysql_fetch_object($result)) $rows[] = array($row->society_id, $row->society_name, $row->email);
+		 	while ($row = mysql_fetch_object($result)) $rows[] = array($row->receipt_id, $row->name, $row->cust_email, $row->student_id, $row->products, $row->comments, "price", $row->email, $row->society_name);
 		 	return $rows;
 		}
 		
@@ -223,7 +224,7 @@
 					receipt_id int NOT NULL AUTO_INCREMENT,
 					user_id int,
 					student_id varchar(30),
-					email varchar(100),
+					cust_email varchar(100),
 					name varchar(100),
 					comments text,
 					products varchar(100),

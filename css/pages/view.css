@@ -1,0 +1,36 @@
+.receiptsTable {
+	width: 100%;
+}
+	.receiptsTable tbody tr {
+    	height: 40px;
+    	vertical-align: middle;
+	}
+	.receiptsTable td {
+		padding: 5px;
+    	font-size: 11px;
+    	text-align: center;
+	}
+	
+.DataTables_sort_wrapper {
+    font-size: 12px;
+}
+.DataTables_sort_icon {
+	float: right;
+	margin-left: -16px;
+}
+.dataTables_paginate {
+    font-size: 12px;
+}
+.dataTables_length {
+    font-size: 12px;
+}
+.dataTables_info {
+    font-size: 12px;
+}
+.dataTables_filter input {
+    padding: 2px !important;
+}
+.dataTables_wrapper {
+	min-height: 0px;
+	margin-bottom: 30px;
+}
