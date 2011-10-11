@@ -4,6 +4,7 @@
 	include("db.php");
 	include("config.php");
 	include("email.php");
+	include("template.php");
 	
 	//Start up sessions and initiate main class
 	session_start();

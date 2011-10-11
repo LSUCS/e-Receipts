@@ -14,7 +14,7 @@
 			 * Database settings
 			 */
 			$this->database["host"] = "localhost";
-			$this->database["user"] = "root";
+			$this->database["user"] = "receipts";
 			$this->database["pass"] = "";
 			$this->database["db"]   = "receipts";
 			
@@ -42,7 +42,7 @@
 			 * Email control
 			 */
 			$this->email["user"] = "receipts@lsucs.org.uk";
-			$this->email["pass"] = 'nopassforyou';
+			$this->email["pass"] = '';
 			$this->email["host"] = "ssl://smtp.gmail.com";
 			$this->email["port"] = "465";
 			

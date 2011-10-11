@@ -4,7 +4,7 @@
 		
 		private $config;
 
-		private $to = "";
+	        private $recipients;
 		private $message = "";
 		private $headers = array();
 		
@@ -21,8 +21,8 @@
 		/**
 		 * Sets the address to send to
 		 */
-		function setTo($to) {
-			$this->to = "<" . $to . ">";
+		function addRecipient($rec) {
+			$this->recipients[] = "<" . $rec . ">";
 		}
 		
 		/**
@@ -51,8 +51,7 @@
                        'username' => $this->config->email["user"],
                        'password' => $this->config->email["pass"]));
 
-        	$mail = $smtp->send($this->to, $this->headers, $this->message);
-			echo $mail;	
+        	$mail = $smtp->send($this->recipients, $this->headers, $this->message);	
 	        if (PEAR::isError($mail)) return false;
 			return true;
 			

@@ -45,14 +45,15 @@
 					}
 					
 					//Format product table for email
-					$prodTable = "<table><tr><td>Product</td><td>Price</td></tr>";
+					$prodTable = "<table style='border-color: black;'><tr style='background-color: #333;'><td style='padding: 5px' width='200px'>Product</td><td style='padding: 5px' width='100px'>Price</td></tr>";
 					$total = 0;
 					foreach ($productArray as $key => $product) {
-						$prodTable .= "<tr><td>" . $product->product_name . "</td><td>&pound;" . $product->price . "</td></tr>";
+						$prodTable .= "<tr style='background-color: #C8C8C8; color: black;'><td style='padding: 2px;' width='200px'>" . $product->product_name . "</td><td style='padding: 2px;' width='100px'>&pound;" . $product->price . "</td></tr>";
 						$total += $product->price;
 					}
-					$prodTable .="<tr><td>Order Total</td><td>" . $total . "</td></tr></table>";
-									
+					$prodTable .="</table>";
+					$total = "&pound;" . number_format($total, 2);
+					
 					//Set up email template
 					$template = new Template("receipt");
                     $template->addKey("%TITLE%", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
@@ -60,16 +61,18 @@
                     $template->addKey("%SOCEMAIL%", $society->email);
                     $template->addKey("%SOCFEDEMAIL%", $parent->config->receipt["socfedEmail"]);
                     $template->addKey("%CUSTNAME%", $name);
-                    $template->addKey("%CUSTEMAIL", $emailAddr);
+                    $template->addKey("%CUSTEMAIL%", $emailAddr);
                     $template->addKey("%CUSTID%", $student_id == null?"N/A":$student_id);
                     $template->addKey("%ORDERDATE%", date('l jS \of F Y h:i:s A'));
                     $template->addKey("%PRODTABLE%", $prodTable);
-                    $template->addKey("%ORDERTOTAL", $total);
+                    $template->addKey("%ORDERTOTAL%", $total);
+                    $template->addKey("%ORDERCOMMENTS%", $comments == null?"None":$comments);
+                    $template->addKey("%ISSUER", $parent->user->email);
 
 					//Send email
                     $email = new Email($parent->config);
-                    $email->addHeader("Bcc", $society->email);
-                    $email->setTo($emailAddr);
+                    $email->addRecipient($emailAddr);
+                    $email->addRecipient($society->email);
                     $email->addHeader("Subject", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
                     $email->setMessage($template->format());
                     if (!$email->send()) return $parent->errorJSON($json, "Unable to send email receipt!");
