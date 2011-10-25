@@ -7,13 +7,6 @@
 			//If we are retrieving JSON data
 			if (isset($parent->get)) {
 				
-				//If not logged in, GTFO
-				if (!$parent->loggedIn) return;
-				
-				if ($parent->get == "emails") {
-					$parent->db->getReceipts($parent->user->society_id);
-				}
-				
 				//Set data
 				if ($parent->get == "set") {
 					
@@ -35,13 +28,15 @@
 					if (strlen($student_id) > 0 && preg_match('/^[a-z]\d{6}$/i', $student_id) == 0) return $parent->errorJSON($json, "Invalid student ID!");
 					if (preg_match('/^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff]))(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff])|\.(?=[^\.])){1,62}(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff])|[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]{1,2})|"(?:[^"]|(?<=\x5c)"){1,62}")@(?:(?!.{64})(?:[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.?|[a-zA-Z0-9]\.?)+\.(?:xn--[a-zA-Z0-9]+|[a-zA-Z]{2,6})|\[(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])){3}\])$/ ', $emailAddr) == 0) return $parent->errorJSON($json, "Invalid email format!");
 					if (strlen($comments) > 200) return $parent->errorJSON($json, "Comments may not be over 200 characters!");
+                                        if (strtolower($emailAddr) == $parent->user->email) return $parent->errorJSON($json, "You cannot issue yourself a receipt!");
 					
 					//Check products
 					if (strlen($products) == 0) return $parent->errorJSON($json, "You must enter at least 1 product!");
 					$productArray = explode(",", $products);
 					foreach ($productArray as $key => $product) {
-						if (strlen($product) == 0 || !is_numeric($product) || !$parent->db->getProduct($product, null)) return $parent->errorJSON($json, "Invalid product ID!");
-						$productArray[$key] = $parent->db->getProduct($product, null);
+                                                $prod = $parent->db->getProduct($product, null);
+						if (strlen($product) == 0 || !is_numeric($product) || !$prod || $prod->active == "No") return $parent->errorJSON($json, "Invalid product ID!");
+						$productArray[$key] = $prod;
 					}
 					
 					//Format product table for email
@@ -67,7 +62,7 @@
                     $template->addKey("%PRODTABLE%", $prodTable);
                     $template->addKey("%ORDERTOTAL%", $total);
                     $template->addKey("%ORDERCOMMENTS%", $comments == null?"None":$comments);
-                    $template->addKey("%ISSUER", $parent->user->email);
+                    $template->addKey("%ISSUER%", $parent->user->email);
 
 					//Send email
                     $email = new Email($parent->config);
@@ -112,6 +107,7 @@
 							
 							$products = $parent->db->getProducts($parent->isAdmin() ? null : $parent->user->society_id);
 							foreach ($products as $product) {
+                                                                if ($product[3] == "No") continue; 
 								echo '<option value="' . $product[0] . '">' . $product[1] . '</option>';
 							}
 							
