@@ -44,15 +44,16 @@
 		 */
 		function send() {
 			
-        	$smtp = Mail::factory('smtp',
-          		array ('host' => $this->config->email["host"],
-            		   'port' => $this->config->email["port"],
-                       'auth' => true,
-                       'username' => $this->config->email["user"],
-                       'password' => $this->config->email["pass"]));
+        		$smtp = Mail::factory('smtp',
+          			array ('host' => $this->config->email["host"],
+            		       'port' => $this->config->email["port"],
+                       	'auth' => true,
+                       	'username' => $this->config->email["user"],
+                       	'password' => $this->config->email["pass"]));
 
-        	$mail = $smtp->send($this->recipients, $this->headers, $this->message);	
-	        if (PEAR::isError($mail)) return false;
+        		$mail = $smtp->send($this->recipients, $this->headers, $this->message);
+				
+	        	if (PEAR::isError($mail)) return false;
 			return true;
 			
 		}

@@ -10,6 +10,7 @@
 				//Set data
 				if ($parent->get == "set") {
 					
+
 					$json = array();
 					if ($parent->isAdmin()) return $parent->errorJSON($json, "Admin accounts may not issue receipts!");
 					
@@ -59,18 +60,51 @@
                     $template->addKey("%CUSTEMAIL%", $emailAddr);
                     $template->addKey("%CUSTID%", $student_id == null?"N/A":$student_id);
                     $template->addKey("%ORDERDATE%", date('l jS \of F Y h:i:s A'));
+
                     $template->addKey("%PRODTABLE%", $prodTable);
                     $template->addKey("%ORDERTOTAL%", $total);
                     $template->addKey("%ORDERCOMMENTS%", $comments == null?"None":$comments);
                     $template->addKey("%ISSUER%", $parent->user->email);
 
 					//Send email
-                    $email = new Email($parent->config);
+                    /*$email = new Email($parent->config);
                     $email->addRecipient($emailAddr);
                     $email->addRecipient($society->email);
                     $email->addHeader("Subject", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
                     $email->setMessage($template->format());
-                    if (!$email->send()) return $parent->errorJSON($json, "Unable to send email receipt!");
+                    if (!$email->send($parent)) return $parent->errorJSON($json, "Unable to send email receipt!");*/
+
+					//HACKLOLOLOLOLOLOLOOOOO
+					//set POST variables
+                    $url = 'http://oliwali.co.uk/receipts/send.php';
+                    $fields = array(
+                                'pass' => 'davepasshello',
+                                'recip' => $emailAddr,
+                                'socemail' => $society->email,
+                                'subject' => urlencode(str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"])),
+                                'message' => urlencode($template->format())
+                                
+                            );
+                    //url-ify the data for the POST
+                    foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+                    rtrim($fields_string,'&');
+                    //open connection
+                    $ch = curl_init();
+
+                    //set the url, number of POST vars, POST data
+                    curl_setopt($ch,CURLOPT_URL,$url);
+                    curl_setopt($ch,CURLOPT_POST,count($fields));
+                    curl_setopt($ch,CURLOPT_POSTFIELDS,$fields_string);
+		      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+                    //execute post
+                    $result = curl_exec($ch);
+
+                    //close connection
+                    curl_close($ch);
+		
+                    if ($result != 1) return $parent->errorJSON($json, "Unable to send email receipt!");
+                    
 
 					//Add to database
 					if (!$parent->db->addReceipt($parent->user->user_id, $emailAddr, $name, $student_id, $products, $comments, $parent->user->society_id)) {
