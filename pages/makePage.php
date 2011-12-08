@@ -67,43 +67,12 @@
                     $template->addKey("%ISSUER%", $parent->user->email);
 
 					//Send email
-                    /*$email = new Email($parent->config);
+                    $email = new Email($parent->config);
                     $email->addRecipient($emailAddr);
                     $email->addRecipient($society->email);
                     $email->addHeader("Subject", str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"]));
                     $email->setMessage($template->format());
-                    if (!$email->send($parent)) return $parent->errorJSON($json, "Unable to send email receipt!");*/
-
-					//HACKLOLOLOLOLOLOLOOOOO
-					//set POST variables
-                    $url = 'http://oliwali.co.uk/receipts/send.php';
-                    $fields = array(
-                                'pass' => 'davepasshello',
-                                'recip' => $emailAddr,
-                                'socemail' => $society->email,
-                                'subject' => urlencode(str_replace('%SOCIETY%', $society->society_name, $parent->config->receipt["receiptTitle"])),
-                                'message' => urlencode($template->format())
-                                
-                            );
-                    //url-ify the data for the POST
-                    foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
-                    rtrim($fields_string,'&');
-                    //open connection
-                    $ch = curl_init();
-
-                    //set the url, number of POST vars, POST data
-                    curl_setopt($ch,CURLOPT_URL,$url);
-                    curl_setopt($ch,CURLOPT_POST,count($fields));
-                    curl_setopt($ch,CURLOPT_POSTFIELDS,$fields_string);
-		      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-                    //execute post
-                    $result = curl_exec($ch);
-
-                    //close connection
-                    curl_close($ch);
-		
-                    if ($result != 1) return $parent->errorJSON($json, "Unable to send email receipt!");
+                    if (!$email->send($parent)) return $parent->errorJSON($json, "Unable to send email receipt!");
                     
 
 					//Add to database
@@ -142,13 +111,14 @@
 							$products = $parent->db->getProducts($parent->isAdmin() ? null : $parent->user->society_id);
 							foreach ($products as $product) {
                                                                 if ($product[3] == "No") continue; 
-								echo '<option value="' . $product[0] . '">' . $product[1] . '</option>';
+								echo '<option value="' . $product[0] . '">' . $product[1] . ' - ' . $product[2] . '</option>';
 							}
 							
 						?>
 						</select>
 					</div>
 					<textarea class="receiptComments">Comments</textarea>
+					<p class="orderTotal">Order Total: <span id="totalNum">&pound;0.00</span></p>
 					<input type="button" class="submitButton" value="Submit" />
 				</form>
 			</div>

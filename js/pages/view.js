@@ -22,7 +22,7 @@ $(document).ready(function(){
 						{ "sTitle": "Products", "bSearchable": true, "sWidth": "150px" },
 						{ "sTitle": "Comments", "bSearchable": true },
 						{ "sTitle": "Total" },
-						{ "sTitle": "Issuer", "bSearchable": true },
+						{ "sTitle": "Issuer", "bSearchable": false },
 						{ "sTitle": "Society", "bSearchable": true }
 					] } );
 				

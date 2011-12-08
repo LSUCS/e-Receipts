@@ -70,3 +70,13 @@
 		height: 80px;
 		color: #999;
 	}
+.orderTotal {
+	text-align: center;
+	margin-left: -25px;
+	margin-top: 5px;
+	font-size: 14px;
+}
+	.orderTotal #totalNum {
+		font-weight: bold;
+		color: #333;
+	}
